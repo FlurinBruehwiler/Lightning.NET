@@ -15,6 +15,9 @@ public class TestBase
    }
    protected LightningEnvironment CreateEnvironment(string? path = null, EnvironmentConfiguration? config = null) =>
       config is null ? new(path ?? TempPath()) : new(path ?? TempPath(), config);
+
+   protected LightningEnvironment CreateInMemoryEnvironment(EnvironmentConfiguration? config = null) =>
+      LightningEnvironment.CreateInMemory(config);
    
    public static void CleanupSession()
    {

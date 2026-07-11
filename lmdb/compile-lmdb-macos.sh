@@ -1,10 +1,11 @@
 #!/opt/homebrew/bin/bash
 
 if [ ! -d "lmdb" ]; then
-  git clone https://git.openldap.org/openldap/openldap.git lmdb
+  git clone https://github.com/FlurinBruehwiler/lmdb.git lmdb
 fi
 cd ./lmdb/libraries/liblmdb || exit
-git checkout LMDB_0.9.35
+git fetch origin MDB_MEMORY
+git checkout MDB_MEMORY
 
 declare -A build_outputs
 declare -A supported_targets=(

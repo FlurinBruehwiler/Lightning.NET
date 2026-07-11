@@ -37,7 +37,7 @@ public static partial class Lmdb
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial MDBResultCode mdb_env_open(nint env, string path, EnvironmentOpenFlags flags, UnixAccessMode mode);
+    public static partial MDBResultCode mdb_env_open(nint env, string? path, EnvironmentOpenFlags flags, UnixAccessMode mode);
 
     /// <summary>
     /// Sets the size of the memory map to use for this environment.
@@ -683,7 +683,7 @@ public static partial class Lmdb
         /// <param name="mode">The UNIX permissions to set on created files</param>
         /// <returns>A result code indicating success or failure</returns>
         [DllImport(MDB_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
-        public static extern MDBResultCode mdb_env_open(nint env, byte[] path, EnvironmentOpenFlags flags,
+        public static extern MDBResultCode mdb_env_open(nint env, byte[]? path, EnvironmentOpenFlags flags,
             UnixAccessMode mode);
 
         /// <summary>
@@ -694,9 +694,12 @@ public static partial class Lmdb
         /// <param name="flags">Special options for this environment</param>
         /// <param name="mode">The UNIX permissions to set on created files</param>
         /// <returns>A result code indicating success or failure</returns>
-        internal static MDBResultCode mdb_env_open(nint env, string path, EnvironmentOpenFlags flags,
+        internal static MDBResultCode mdb_env_open(nint env, string? path, EnvironmentOpenFlags flags,
             UnixAccessMode mode)
         {
+            if (path is null)
+                return mdb_env_open(env, (byte[]?)null, flags, mode);
+
             var bytes = System.Text.Encoding.UTF8.GetBytes(path + "\0");
             return mdb_env_open(env, bytes, flags, mode);
         }

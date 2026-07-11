@@ -31,6 +31,17 @@ public sealed class LightningEnvironment : IDisposable
         Path = path;
     }
 
+    private LightningEnvironment(EnvironmentConfiguration? configuration)
+    {
+        mdb_env_create(out _handle).ThrowOnError();
+        configuration?.Configure(this);
+        if (configuration is not null)
+            _config = configuration;
+
+        IsInMemory = true;
+        Path = string.Empty;
+    }
+
     /// <summary>
     /// Creates a new instance of LightningEnvironment.
     /// </summary>
@@ -51,9 +62,24 @@ public sealed class LightningEnvironment : IDisposable
     }
 
     /// <summary>
+    /// Creates a process-local, non-persistent in-memory environment.
+    /// </summary>
+    /// <param name="configuration">Configuration for the environment.</param>
+    /// <returns>A new in-memory environment.</returns>
+    public static LightningEnvironment CreateInMemory(EnvironmentConfiguration? configuration = null)
+    {
+        return new LightningEnvironment(configuration);
+    }
+
+    /// <summary>
     /// Whether the environment is opened.
     /// </summary>
     public bool IsOpened { get; private set; }
+
+    /// <summary>
+    /// Whether this environment stores all data in process-local memory instead of files.
+    /// </summary>
+    public bool IsInMemory { get; }
 
     /// <summary>
     /// Current lmdb version.
@@ -216,16 +242,30 @@ public sealed class LightningEnvironment : IDisposable
         if(IsOpened)
             throw new InvalidOperationException("Environment is already opened.");
 
-        if (!openFlags.HasFlag(EnvironmentOpenFlags.NoSubDir) && !Directory.Exists(Path))
+        if (!IsInMemory && openFlags.HasFlag(EnvironmentOpenFlags.Memory))
+            throw new ArgumentException("Use LightningEnvironment.CreateInMemory() to create an in-memory environment.", nameof(openFlags));
+
+        if (IsInMemory)
+        {
+            if (openFlags.HasFlag(EnvironmentOpenFlags.ReadOnly))
+                throw new ArgumentException("In-memory environments cannot be opened read-only.", nameof(openFlags));
+            if (openFlags.HasFlag(EnvironmentOpenFlags.FixedMap))
+                throw new ArgumentException("In-memory environments cannot use fixed maps.", nameof(openFlags));
+
+            openFlags |= EnvironmentOpenFlags.Memory;
+        }
+
+        if (!IsInMemory && !openFlags.HasFlag(EnvironmentOpenFlags.NoSubDir) && !Directory.Exists(Path))
             Directory.CreateDirectory(Path);
 
         try
         {
-            mdb_env_open(_handle, Path, openFlags, accessMode).ThrowOnError();
+            mdb_env_open(_handle, IsInMemory ? null : Path, openFlags, accessMode).ThrowOnError();
         }
         catch(Exception ex)
         {
-            throw new LightningException($"Failed to open environment at path {Path}", ex);
+            var target = IsInMemory ? "in-memory environment" : $"environment at path {Path}";
+            throw new LightningException($"Failed to open {target}", ex);
         }
 
         IsOpened = true;
@@ -300,6 +340,7 @@ public sealed class LightningEnvironment : IDisposable
     public MDBResultCode CopyTo(string path, bool compact = false)
     {
         EnsureOpened();
+        ThrowIfInMemoryFileOperation();
 
         var flags = compact
             ? EnvironmentCopyFlags.Compact
@@ -419,6 +460,7 @@ public sealed class LightningEnvironment : IDisposable
     public FileStream GetFileStream()
     {
         EnsureOpened();
+        ThrowIfInMemoryFileOperation();
 
         // Get the raw file descriptor
         mdb_env_get_fd(_handle, out var fd).ThrowOnError();
@@ -450,6 +492,7 @@ public sealed class LightningEnvironment : IDisposable
             throw new ArgumentException("FileStream must be writable", nameof(fileStream));
 
         EnsureOpened();
+        ThrowIfInMemoryFileOperation();
 
         // Get the SafeFileHandle from the FileStream
         var safeHandle = fileStream.SafeFileHandle;
@@ -468,6 +511,12 @@ public sealed class LightningEnvironment : IDisposable
     {
         if (!IsOpened)
             throw new InvalidOperationException("Environment should be opened");
+    }
+
+    private void ThrowIfInMemoryFileOperation()
+    {
+        if (IsInMemory)
+            throw new InvalidOperationException("This operation requires a file-backed environment.");
     }
 
     /// <summary>

@@ -90,6 +90,12 @@ public enum EnvironmentOpenFlags
     /// <summary>
     /// MDB_NOMEMINIT. don't initialize malloc'd memory before writing to datafile
     /// </summary>
-    NoMemoryInitialization = 0x1000000
+    NoMemoryInitialization = 0x1000000,
+
+    /// <summary>
+    /// MDB_MEMORY. Keep the environment entirely in process-local memory instead of using data and lock files.
+    /// This mode is non-persistent, implies MDB_WRITEMAP and MDB_NOLOCK, and cannot be used with MDB_RDONLY or MDB_FIXEDMAP.
+    /// </summary>
+    Memory = 0x2000000
 
 }

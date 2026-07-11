@@ -20,6 +20,120 @@ public class EnvironmentTests : TestBase
         env.Open();
     }
 
+    public void in_memory_environment_should_open_without_path()
+    {
+        using var env = CreateInMemoryEnvironment(new EnvironmentConfiguration
+        {
+            MapSize = 1024 * 1024 * 16,
+            MaxDatabases = 2
+        });
+
+        env.Path.ShouldBe(string.Empty);
+        env.Open();
+
+        env.IsOpened.ShouldBeTrue();
+        env.IsInMemory.ShouldBeTrue();
+        env.Info.MapSize.ShouldBe(1024 * 1024 * 16);
+        env.Flags.HasFlag(EnvironmentOpenFlags.Memory).ShouldBeTrue();
+        env.Flags.HasFlag(EnvironmentOpenFlags.WriteMap).ShouldBeTrue();
+        env.Flags.HasFlag(EnvironmentOpenFlags.NoLock).ShouldBeTrue();
+    }
+
+    public void in_memory_environment_can_put_and_get()
+    {
+        using var env = CreateInMemoryEnvironment(new EnvironmentConfiguration { MapSize = 1024 * 1024 * 16 });
+        env.Open();
+
+        using (var tx = env.BeginTransaction())
+        using (var db = tx.OpenDatabase(new DatabaseConfiguration { Flags = DatabaseOpenFlags.Create }))
+        {
+            tx.Put(db, "hello", "world").ShouldBe(MDBResultCode.Success);
+            tx.Commit();
+        }
+
+        using (var tx = env.BeginTransaction(TransactionBeginFlags.ReadOnly))
+        using (var db = tx.OpenDatabase())
+        {
+            tx.TryGet(db, "hello", out var value).ShouldBeTrue();
+            value.ShouldBe("world");
+        }
+    }
+
+    public void in_memory_environment_supports_named_databases()
+    {
+        using var env = CreateInMemoryEnvironment(new EnvironmentConfiguration
+        {
+            MapSize = 1024 * 1024 * 16,
+            MaxDatabases = 2
+        });
+        env.Open();
+
+        using var tx = env.BeginTransaction();
+        using var db = tx.OpenDatabase("named", new DatabaseConfiguration { Flags = DatabaseOpenFlags.Create });
+        tx.Put(db, "key", "value").ShouldBe(MDBResultCode.Success);
+        tx.Commit();
+    }
+
+    public void in_memory_environment_flush_is_noop_success()
+    {
+        using var env = CreateInMemoryEnvironment();
+        env.Open();
+
+        env.Flush(force: true).ShouldBe(MDBResultCode.Success);
+    }
+
+    public void in_memory_environment_is_not_persistent()
+    {
+        using (var env = CreateInMemoryEnvironment())
+        {
+            env.Open();
+            using var tx = env.BeginTransaction();
+            using var db = tx.OpenDatabase(new DatabaseConfiguration { Flags = DatabaseOpenFlags.Create });
+            tx.Put(db, "temporary", "value").ShouldBe(MDBResultCode.Success);
+            tx.Commit();
+        }
+
+        using (var env = CreateInMemoryEnvironment())
+        {
+            env.Open();
+            using var tx = env.BeginTransaction(TransactionBeginFlags.ReadOnly);
+            using var db = tx.OpenDatabase();
+            tx.TryGet(db, "temporary", out _).ShouldBeFalse();
+        }
+    }
+
+    public void in_memory_environment_rejects_incompatible_flags()
+    {
+        using (var env = CreateInMemoryEnvironment())
+        {
+            Should.Throw<ArgumentException>(() => env.Open(EnvironmentOpenFlags.ReadOnly));
+        }
+
+        using (var env = CreateInMemoryEnvironment())
+        {
+            Should.Throw<ArgumentException>(() => env.Open(EnvironmentOpenFlags.FixedMap));
+        }
+    }
+
+    public void path_based_environment_rejects_memory_flag()
+    {
+        using var env = CreateEnvironment();
+
+        Should.Throw<ArgumentException>(() => env.Open(EnvironmentOpenFlags.Memory));
+    }
+
+    public void in_memory_environment_rejects_file_only_apis()
+    {
+        using var env = CreateInMemoryEnvironment();
+        env.Open();
+
+        Should.Throw<InvalidOperationException>(() => env.CopyTo(TempPath()));
+        Should.Throw<InvalidOperationException>(() => env.GetFileStream());
+
+        using var stream = new FileStream(Path.Combine(TempPath(), "copy.mdb"), FileMode.Create, FileAccess.ReadWrite);
+        Should.Throw<InvalidOperationException>(() => env.CopyToStream(stream));
+    }
+
     public void environment_created_from_config()
     {
         const int mapExpected = 1024*1024*20;

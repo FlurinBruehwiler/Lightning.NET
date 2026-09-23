@@ -14,6 +14,8 @@ public class DatabaseConfiguration
 {
     private IComparer<MDBValue>? _comparer;
     private IComparer<MDBValue>? _duplicatesComparer;
+    private nint _nativeComparer;
+    private nint _nativeDuplicatesComparer;
 
     public DatabaseConfiguration()
     {
@@ -35,11 +37,21 @@ public class DatabaseConfiguration
     internal IDisposable ConfigureDatabase(LightningTransaction tx, LightningDatabase db)
     {
         var pinnedComparer = new ComparerKeepAlive();
-        if (_comparer != null)
+        if (_nativeComparer != 0)
+        {
+            mdb_set_compare(tx._handle, db._handle, _nativeComparer);
+        }
+        else if (_comparer != null)
         {
             CompareFunction compare = Compare;
             pinnedComparer.AddComparer(compare);
             mdb_set_compare(tx._handle, db._handle, compare);
+        }
+
+        if (_nativeDuplicatesComparer != 0)
+        {
+            mdb_set_dupsort(tx._handle, db._handle, _nativeDuplicatesComparer);
+            return pinnedComparer;
         }
 
         if (_duplicatesComparer == null) return pinnedComparer;
@@ -79,6 +91,27 @@ public class DatabaseConfiguration
     public void FindDuplicatesWith(IComparer<MDBValue> comparer)
     {
         _duplicatesComparer = comparer;
+    }
+
+    /// <summary>
+    /// Sets a custom comparer given as a native function pointer, typically a static method marked
+    /// <c>[UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]</c>. Unlike <see cref="CompareWith(IComparer{MDBValue})"/>
+    /// this needs no marshaled delegate, which browser-wasm cannot hand to native code.
+    /// </summary>
+    /// <param name="comparer">A function comparing two keys, returning less than, equal to or greater than zero.</param>
+    public unsafe void CompareWith(delegate* unmanaged[Cdecl]<MDBValue*, MDBValue*, int> comparer)
+    {
+        _nativeComparer = (nint)comparer;
+    }
+
+    /// <summary>
+    /// Sets a custom duplicate comparer given as a native function pointer, like the native-pointer overload of
+    /// <c>CompareWith</c>.
+    /// </summary>
+    /// <param name="comparer">A function comparing two values, returning less than, equal to or greater than zero.</param>
+    public unsafe void FindDuplicatesWith(delegate* unmanaged[Cdecl]<MDBValue*, MDBValue*, int> comparer)
+    {
+        _nativeDuplicatesComparer = (nint)comparer;
     }
 
     private class ComparerKeepAlive : IDisposable

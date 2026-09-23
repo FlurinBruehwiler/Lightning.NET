@@ -520,6 +520,17 @@ public static partial class Lmdb
     public static partial MDBResultCode mdb_set_compare(nint txn, uint dbi, CompareFunction cmp);
 
     /// <summary>
+    /// Sets a custom key comparison function for a database, given as a native function pointer.
+    /// </summary>
+    /// <param name="txn">A transaction handle</param>
+    /// <param name="dbi">A database handle</param>
+    /// <param name="cmp">An <c>int (*)(const MDB_val*, const MDB_val*)</c> function pointer</param>
+    /// <returns>A result code indicating success or failure</returns>
+    [LibraryImport(MDB_DLL_NAME)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial MDBResultCode mdb_set_compare(nint txn, uint dbi, nint cmp);
+
+    /// <summary>
     /// Sets a custom data comparison function for a database with MDB_DUPSORT.
     /// </summary>
     /// <param name="txn">A transaction handle</param>
@@ -529,6 +540,17 @@ public static partial class Lmdb
     [LibraryImport(MDB_DLL_NAME)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_set_dupsort(nint txn, uint dbi, CompareFunction cmp);
+
+    /// <summary>
+    /// Sets a custom data comparison function for a database with MDB_DUPSORT, given as a native function pointer.
+    /// </summary>
+    /// <param name="txn">A transaction handle</param>
+    /// <param name="dbi">A database handle</param>
+    /// <param name="cmp">An <c>int (*)(const MDB_val*, const MDB_val*)</c> function pointer</param>
+    /// <returns>A result code indicating success or failure</returns>
+    [LibraryImport(MDB_DLL_NAME)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial MDBResultCode mdb_set_dupsort(nint txn, uint dbi, nint cmp);
 
     /// <summary>
     /// Compares two data items according to a database's key comparison function.
@@ -1147,6 +1169,16 @@ public static partial class Lmdb
         public static extern MDBResultCode mdb_set_compare(nint txn, uint dbi, CompareFunction cmp);
 
         /// <summary>
+        /// Sets a custom key comparison function for a database, given as a native function pointer.
+        /// </summary>
+        /// <param name="txn">A transaction handle</param>
+        /// <param name="dbi">A database handle</param>
+        /// <param name="cmp">An <c>int (*)(const MDB_val*, const MDB_val*)</c> function pointer</param>
+        /// <returns>A result code indicating success or failure</returns>
+        [DllImport(MDB_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern MDBResultCode mdb_set_compare(nint txn, uint dbi, nint cmp);
+
+        /// <summary>
         /// Sets a custom data comparison function for a database with MDB_DUPSORT.
         /// </summary>
         /// <param name="txn">A transaction handle</param>
@@ -1155,6 +1187,16 @@ public static partial class Lmdb
         /// <returns>A result code indicating success or failure</returns>
         [DllImport(MDB_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
         public static extern MDBResultCode mdb_set_dupsort(nint txn, uint dbi, CompareFunction cmp);
+
+        /// <summary>
+        /// Sets a custom data comparison function for a database with MDB_DUPSORT, given as a native function pointer.
+        /// </summary>
+        /// <param name="txn">A transaction handle</param>
+        /// <param name="dbi">A database handle</param>
+        /// <param name="cmp">An <c>int (*)(const MDB_val*, const MDB_val*)</c> function pointer</param>
+        /// <returns>A result code indicating success or failure</returns>
+        [DllImport(MDB_DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
+        public static extern MDBResultCode mdb_set_dupsort(nint txn, uint dbi, nint cmp);
 
         /// <summary>
         /// Compares two data items according to a database's key comparison function.

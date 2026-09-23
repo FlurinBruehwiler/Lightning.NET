@@ -1,0 +1,8 @@
+<Project>
+  <!-- On browser-wasm native libraries can't be loaded at runtime: LMDB is compiled from source into
+       dotnet.native.wasm by the app's wasm-tools workload. A NativeFileReference turns WasmBuildNative on.
+       Apps that reference LightningDB.csproj directly import this file. -->
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'browser-wasm'">
+    <NativeFileReference Include="$(MSBuildThisFileDirectory)wasm\lmdb.c" />
+  </ItemGroup>
+</Project>

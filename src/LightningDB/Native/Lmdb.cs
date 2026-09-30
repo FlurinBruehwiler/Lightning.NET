@@ -3,10 +3,6 @@ using System.Runtime.InteropServices;
 
 namespace LightningDB.Native;
 
-#if NET7_0_OR_GREATER
-using System.Runtime.CompilerServices;
-#endif
-
 public static partial class Lmdb
 {
 #if NET7_0_OR_GREATER
@@ -16,7 +12,6 @@ public static partial class Lmdb
     /// <param name="env">The address where the new handle will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_create(out nint env);
 
     /// <summary>
@@ -24,7 +19,6 @@ public static partial class Lmdb
     /// </summary>
     /// <param name="env">The environment handle to close</param>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void mdb_env_close(nint env);
 
     /// <summary>
@@ -36,7 +30,6 @@ public static partial class Lmdb
     /// <param name="mode">The UNIX permissions to set on created files</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_open(nint env, string? path, EnvironmentOpenFlags flags, UnixAccessMode mode);
 
     /// <summary>
@@ -46,7 +39,6 @@ public static partial class Lmdb
     /// <param name="size">The size in bytes</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_set_mapsize(nint env, nint size);
 
     /// <summary>
@@ -56,7 +48,6 @@ public static partial class Lmdb
     /// <param name="readers">Address where the number of readers will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_get_maxreaders(nint env, out uint readers);
 
     /// <summary>
@@ -66,7 +57,6 @@ public static partial class Lmdb
     /// <param name="readers">The number of reader slots to allocate</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_set_maxreaders(nint env, uint readers);
 
     /// <summary>
@@ -76,7 +66,6 @@ public static partial class Lmdb
     /// <param name="dbs">The maximum number of databases</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_set_maxdbs(nint env, uint dbs);
 
     /// <summary>
@@ -87,7 +76,6 @@ public static partial class Lmdb
     /// <param name="onoff">A boolean to turn the flags on or off</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_set_flags(nint env, uint flags, [MarshalAs(UnmanagedType.I1)] bool onoff);
 
     /// <summary>
@@ -97,7 +85,6 @@ public static partial class Lmdb
     /// <param name="flags">Address where the flags will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_get_flags(nint env, out uint flags);
 
     /// <summary>
@@ -107,7 +94,6 @@ public static partial class Lmdb
     /// <param name="path">Address where the path will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_get_path(nint env, out nint path);
 
     /// <summary>
@@ -117,7 +103,6 @@ public static partial class Lmdb
     /// <param name="fd">Address where the descriptor will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_get_fd(nint env, out nint fd);
 
     /// <summary>
@@ -126,7 +111,6 @@ public static partial class Lmdb
     /// <param name="env">The environment handle</param>
     /// <returns>The maximum size of a key we can write</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial int mdb_env_get_maxkeysize(nint env);
 
     /// <summary>
@@ -136,7 +120,6 @@ public static partial class Lmdb
     /// <param name="ctx">An arbitrary pointer for your application's use</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_set_userctx(nint env, nint ctx);
 
     /// <summary>
@@ -145,7 +128,6 @@ public static partial class Lmdb
     /// <param name="env">The environment handle</param>
     /// <returns>The pointer set by mdb_env_set_userctx</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial nint mdb_env_get_userctx(nint env);
 
     /// <summary>
@@ -155,7 +137,6 @@ public static partial class Lmdb
     /// <param name="func">A callback function to run when an assertion fails</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_set_assert(nint env, nint func);
 
     /// <summary>
@@ -167,7 +148,6 @@ public static partial class Lmdb
     /// <param name="db">Address where the database handle will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_dbi_open(nint txn, string? name, DatabaseOpenFlags flags, out uint db);
 
     /// <summary>
@@ -176,7 +156,6 @@ public static partial class Lmdb
     /// <param name="env">The environment handle</param>
     /// <param name="dbi">A database handle returned by mdb_dbi_open</param>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void mdb_dbi_close(nint env, uint dbi);
 
     /// <summary>
@@ -187,7 +166,6 @@ public static partial class Lmdb
     /// <param name="flags">Address where the flags will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_dbi_flags(nint txn, uint dbi, out uint flags);
 
     /// <summary>
@@ -198,7 +176,6 @@ public static partial class Lmdb
     /// <param name="del">If true, delete the DB from the environment; otherwise just empty it</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_drop(nint txn, uint dbi, [MarshalAs(UnmanagedType.I1)] bool del);
 
     /// <summary>
@@ -210,7 +187,6 @@ public static partial class Lmdb
     /// <param name="txn">Address where the new transaction handle will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_txn_begin(nint env, nint parent, TransactionBeginFlags flags, out nint txn);
 
     /// <summary>
@@ -219,7 +195,6 @@ public static partial class Lmdb
     /// <param name="txn">A transaction handle</param>
     /// <returns>The environment handle</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial nint mdb_txn_env(nint txn);
 
     /// <summary>
@@ -228,7 +203,6 @@ public static partial class Lmdb
     /// <param name="txn">A transaction handle</param>
     /// <returns>The transaction ID</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial nuint mdb_txn_id(nint txn);
 
     /// <summary>
@@ -237,7 +211,6 @@ public static partial class Lmdb
     /// <param name="txn">A transaction handle</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_txn_commit(nint txn);
 
     /// <summary>
@@ -245,7 +218,6 @@ public static partial class Lmdb
     /// </summary>
     /// <param name="txn">A transaction handle</param>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void mdb_txn_abort(nint txn);
 
     /// <summary>
@@ -253,7 +225,6 @@ public static partial class Lmdb
     /// </summary>
     /// <param name="txn">A transaction handle</param>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void mdb_txn_reset(nint txn);
 
     /// <summary>
@@ -262,7 +233,6 @@ public static partial class Lmdb
     /// <param name="txn">A transaction handle</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_txn_renew(nint txn);
 
     /// <summary>
@@ -273,7 +243,6 @@ public static partial class Lmdb
     /// <param name="patch">The library patch version number</param>
     /// <returns>Pointer to a version string</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial nint mdb_version(out int major, out int minor, out int patch);
 
     /// <summary>
@@ -282,7 +251,6 @@ public static partial class Lmdb
     /// <param name="err">The error code</param>
     /// <returns>A pointer to the error string</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial nint mdb_strerror(int err);
 
     /// <summary>
@@ -293,7 +261,6 @@ public static partial class Lmdb
     /// <param name="stat">Address where the database statistics will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_stat(nint txn, uint dbi, out MDBStat stat);
 
     /// <summary>
@@ -303,7 +270,6 @@ public static partial class Lmdb
     /// <param name="path">The directory in which the backup will reside</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_copy(nint env, string path);
 
     /// <summary>
@@ -313,7 +279,6 @@ public static partial class Lmdb
     /// <param name="fd">The file descriptor to write to</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_copyfd(nint env, nint fd);
 
     /// <summary>
@@ -324,7 +289,6 @@ public static partial class Lmdb
     /// <param name="copyFlags">Special options for this copy operation</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME, StringMarshalling = StringMarshalling.Utf8)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_copy2(nint env, string path, EnvironmentCopyFlags copyFlags);
 
     /// <summary>
@@ -335,7 +299,6 @@ public static partial class Lmdb
     /// <param name="copyFlags">Special options for this copy operation</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_copyfd2(nint env, nint fd, EnvironmentCopyFlags copyFlags);
 
     /// <summary>
@@ -345,7 +308,6 @@ public static partial class Lmdb
     /// <param name="stat">Address where the environment info will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_info(nint env, out MDBEnvInfo stat);
 
     /// <summary>
@@ -355,7 +317,6 @@ public static partial class Lmdb
     /// <param name="stat">Address where the environment statistics will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_stat(nint env, out MDBStat stat);
 
     /// <summary>
@@ -365,7 +326,6 @@ public static partial class Lmdb
     /// <param name="force">If true, force a synchronous flush; otherwise if the environment has MDB_NOSYNC or MDB_MAPASYNC, it will not be synchronous</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_env_sync(nint env, [MarshalAs(UnmanagedType.I1)] bool force);
 
     /// <summary>
@@ -377,7 +337,6 @@ public static partial class Lmdb
     /// <param name="data">Address where the retrieved data will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_get(nint txn, uint dbi, ref MDBValue key, out MDBValue data);
 
     /// <summary>
@@ -387,7 +346,6 @@ public static partial class Lmdb
     /// <param name="countp">Address where the count will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_cursor_count(nint cursor, out nuint countp);
 
     /// <summary>
@@ -400,7 +358,6 @@ public static partial class Lmdb
     /// <param name="flags">Special options for this operation</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_put(nint txn, uint dbi, ref MDBValue key, ref MDBValue data, PutOptions flags);
 
     /// <summary>
@@ -412,7 +369,6 @@ public static partial class Lmdb
     /// <param name="data">The data to delete (only needed for MDB_DUPSORT)</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_del(nint txn, uint dbi, ref MDBValue key, ref MDBValue data);
 
     /// <summary>
@@ -424,7 +380,6 @@ public static partial class Lmdb
     /// <param name="data">NULL pointer to delete all of the data items for the key</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_del(nint txn, uint dbi, ref MDBValue key, nint data);
 
     /// <summary>
@@ -435,7 +390,6 @@ public static partial class Lmdb
     /// <param name="cursor">Address where the new cursor handle will be stored</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_cursor_open(nint txn, uint dbi, out nint cursor);
 
     /// <summary>
@@ -443,7 +397,6 @@ public static partial class Lmdb
     /// </summary>
     /// <param name="cursor">A cursor handle to close</param>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void mdb_cursor_close(nint cursor);
 
     /// <summary>
@@ -453,7 +406,6 @@ public static partial class Lmdb
     /// <param name="cursor">A cursor handle to renew</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_cursor_renew(nint txn, nint cursor);
 
     /// <summary>
@@ -462,7 +414,6 @@ public static partial class Lmdb
     /// <param name="cursor">A cursor handle</param>
     /// <returns>The transaction handle</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial nint mdb_cursor_txn(nint cursor);
 
     /// <summary>
@@ -471,7 +422,6 @@ public static partial class Lmdb
     /// <param name="cursor">A cursor handle</param>
     /// <returns>The database handle</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial uint mdb_cursor_dbi(nint cursor);
 
     /// <summary>
@@ -483,7 +433,6 @@ public static partial class Lmdb
     /// <param name="op">The cursor operation to perform</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_cursor_get(nint cursor, ref MDBValue key, ref MDBValue data, CursorOperation op);
 
     /// <summary>
@@ -495,7 +444,6 @@ public static partial class Lmdb
     /// <param name="flags">Special options for this operation</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_cursor_put(nint cursor, ref MDBValue key, ref MDBValue mdbValue, CursorPutOptions flags);
 
     /// <summary>
@@ -505,7 +453,6 @@ public static partial class Lmdb
     /// <param name="flags">Special options for this operation</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_cursor_del(nint cursor, CursorDeleteOption flags);
 
     /// <summary>
@@ -516,7 +463,6 @@ public static partial class Lmdb
     /// <param name="cmp">The comparison function to set</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_set_compare(nint txn, uint dbi, CompareFunction cmp);
 
     /// <summary>
@@ -527,7 +473,6 @@ public static partial class Lmdb
     /// <param name="cmp">An <c>int (*)(const MDB_val*, const MDB_val*)</c> function pointer</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_set_compare(nint txn, uint dbi, nint cmp);
 
     /// <summary>
@@ -538,7 +483,6 @@ public static partial class Lmdb
     /// <param name="cmp">The comparison function to set</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_set_dupsort(nint txn, uint dbi, CompareFunction cmp);
 
     /// <summary>
@@ -549,7 +493,6 @@ public static partial class Lmdb
     /// <param name="cmp">An <c>int (*)(const MDB_val*, const MDB_val*)</c> function pointer</param>
     /// <returns>A result code indicating success or failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial MDBResultCode mdb_set_dupsort(nint txn, uint dbi, nint cmp);
 
     /// <summary>
@@ -560,7 +503,6 @@ public static partial class Lmdb
     /// <param name="a">The first item to compare</param>
     /// <param name="b">The second item to compare</param>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial int mdb_cmp(nint txn, uint dbi, ref MDBValue a, ref MDBValue b);
 
     /// <summary>
@@ -571,7 +513,6 @@ public static partial class Lmdb
     /// <param name="a">The first item to compare</param>
     /// <param name="b">The second item to compare</param>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial int mdb_dcmp(nint txn, uint dbi, ref MDBValue a, ref MDBValue b);
 
     /// <summary>
@@ -582,7 +523,6 @@ public static partial class Lmdb
     /// <param name="ctx">Arbitrary context data to pass to the function</param>
     /// <returns>Number of readers that were found</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial int mdb_reader_list(nint env, nint func, nint ctx);
 
     /// <summary>
@@ -592,7 +532,6 @@ public static partial class Lmdb
     /// <param name="dead">Address where the number of stale readers cleaned up will be stored</param>
     /// <returns>0 on success, non-zero on failure</returns>
     [LibraryImport(MDB_DLL_NAME)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial int mdb_reader_check(nint env, out int dead);
 #endif
 }
